@@ -138,4 +138,3 @@ g = g + geom_line(aes(y= theta_discrete), colour="green")
 g
 
 ```
-linha teste
