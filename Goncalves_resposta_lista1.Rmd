@@ -1,0 +1,140 @@
+---
+title: "Goncalves_resposta_lista1."
+author: "Moisés Gonçalves"
+date: "2025-01-31"
+output: pdf_document
+---
+
+# Questão 1 
+```{r setup, include=FALSE}
+#require(ggplot2)
+library(ggplot2)
+
+set.seed(15)
+N = 9
+m = 3
+rho = 0.95
+sigma = 0.007
+
+thetas = c(1:9)
+
+
+## Upper bound of theta 
+
+thetas[N] = m*sigma/((1-rho^2)^(1/2))
+
+## Lower bounf of theta 
+thetas[1] = -thetas[N]
+
+delta_theta = thetas[N]/((N-1)/2)
+
+# The other theta_ns
+# This calculates the value of the intermediary thetas
+
+for (i in 2:(N-1)){
+  print(i)
+  thetas[i] = thetas[1] + (i-1)*delta_theta
+}
+thetas
+
+
+```
+
+# Creating the transition matrix
+```{r}
+
+transition_matrix = matrix(,N,N)
+#transition_matrix
+
+
+#Probability(i,j) is given theta_i the probability of theta_j being draw in the next period
+
+for (i in 1:N){
+  for (j in 1:N){
+    if (j==1){
+      transition_matrix[i,j] = pnorm((thetas[j] + delta_theta/2 - rho*thetas[i])/sigma)
+    }else if (j==N){
+      transition_matrix[i,j] = 1 - pnorm((thetas[j] - delta_theta/2 - rho*thetas[i])/sigma)
+    }else{
+    transition_matrix[i,j] = pnorm((thetas[j] + delta_theta/2 - rho*thetas[i])/sigma) - pnorm((thetas[j] - delta_theta/2 - rho*thetas[i])/sigma)
+    }
+  }
+}
+transition_matrix
+
+```
+# Questão 2
+```{r}
+#testes
+
+number_realizations = 1000
+epsilon = rnorm(n=number_realizations, mean =0, sd = sigma)
+
+theta_realized = c(1:number_realizations)
+
+for (i in 1:number_realizations){
+  if(i ==1){
+    theta_realized[i] = epsilon[i]
+  }else{
+    theta_realized[i] = rho*theta_realized[i-1] + epsilon[i]   
+  }
+
+}
+plot(1:number_realizations,theta_realized, type ="l")  
+abline(h = thetas)
+
+```
+```{r}
+# Transformar a transition_matrix (que está en valores de pdf) em valores de cdf
+cdf_transition_matrix = transition_matrix
+for (i in 1:N){
+  for (j in 1:N){
+    cdf_transition_matrix[i,j] = sum(transition_matrix[i,1:j])
+  }
+  
+}
+cdf_transition_matrix
+
+```
+
+
+```{r}
+#hist(epsilon, 200) # plota um histograma dos epsilons
+
+theta_discrete = c(1:number_realizations)
+
+cdf_epsilon = pnorm(epsilon, mean = 0, sd = sigma)
+
+
+
+
+# O primeiro theta vou assumir que o "theta aterior" é 0, pois a média do erro é 0
+
+index_theta_old = 5
+
+for (i in 1:number_realizations){
+    for (index_theta in 1:N){
+      if(cdf_epsilon[i] < cdf_transition_matrix[index_theta_old,index_theta]){
+        theta_discrete[i] = thetas[index_theta]
+        index_theta_old = index_theta
+        #print(index_theta)
+        break
+      }
+    }
+} 
+
+#plot(theta_discrete)
+#theta_discrete
+```
+
+```{r}
+x = c(1:number_realizations)
+df = data.frame(x,theta_realized, theta_discrete)
+g = ggplot(df,aes(x))
+g = g + geom_hline(yintercept = thetas)
+g = g + geom_line(aes(y=theta_realized), colour="red")
+g = g + geom_line(aes(y= theta_discrete), colour="green")
+
+g
+
+```
