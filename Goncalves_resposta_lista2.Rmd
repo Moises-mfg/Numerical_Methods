@@ -10,7 +10,34 @@ output: pdf_document
 #require(ggplot2)
 library(ggplot2)
 
-set.seed(15)
+set.seed(35)
+
+#creating variables 
+beta = 0.987 # intertemporal discount rate (discrete time)
+
+mu = 2 # risk aversion
+
+alpha = 1/3 # income of labor/ toal income 
+
+delta = 0.012 # depreciation rate 
+
+rho = 0.95 # persistence of the previous shock
+
+sigma = 0.007 # variance of the white error of the shock
+
+toler = 10^(-5)
+```
+
+```{r}
+# Question 1
+# Iteration of the value function
+
+#Create grid for capital 
+
+# what is the k_ss?
+
+V0 = 0 # initia guess
+
 
 ```
 
