@@ -1,0 +1,16 @@
+---
+title: "Goncalves_resposta_lista1."
+author: "Moisés Gonçalves"
+date: "2025-01-31"
+output: pdf_document
+---
+
+# Questão 1 
+```{r setup, include=FALSE}
+#require(ggplot2)
+library(ggplot2)
+
+set.seed(15)
+
+```
+
