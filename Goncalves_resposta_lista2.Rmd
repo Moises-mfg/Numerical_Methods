@@ -107,16 +107,18 @@ colnames(V) = col_names_V
 ####
 
 V_new = V
+policy_k_prime = V
 
 error_V_Vnew = 10 # initial error for the difference between V_t and V_t+1
 
 k_prime_grid = k_grid
 
 
+
 ### Defining the utility function
 u = function(c){
   if(c<0){
-    return(-999999999999999999999999999999)
+    return(-999)
   }
   else{
     return((c^(1-mu) -1)/(1-mu))
@@ -138,8 +140,9 @@ while (max_iter > iter){
     k_idx = 1
     for(k in k_grid){
       #print(paste("k = ", k))
-      value_try = -9999999999999999999999999999
+      value_try = -99
       value_try_max = value_try
+      k_prime_max = 0
       
       for (k_prime in k_prime_grid){ #Here i find the k' who maximizes the value function V given k and z
         
@@ -147,9 +150,12 @@ while (max_iter > iter){
         value_try = u(c) + beta*sum(transition_matrix[z_idx,]*V[k_idx,])
         if (value_try> value_try_max){
           value_try_max = value_try
+          k_prime_max = k_prime
         }
       }
       V_new[k_idx,z_idx] = value_try_max
+      policy_k_prime[k_idx,z_idx] = k_prime_max
+      
       k_idx = k_idx +1
     }
     z_idx = z_idx +1
