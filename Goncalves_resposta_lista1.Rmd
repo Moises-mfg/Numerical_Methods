@@ -16,7 +16,7 @@ m = 3
 rho = 0.95
 sigma = 0.007
 
-thetas = c(1:9)
+thetas = c(1:N)
 
 
 ## Upper bound of theta 

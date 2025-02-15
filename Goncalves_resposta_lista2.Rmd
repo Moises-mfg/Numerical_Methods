@@ -32,7 +32,44 @@ k_ss = (1/(alpha*beta) - (1-delta)/alpha)^(1/(alpha-1))
 
 ```{r}
 #Tauchen function
+N = 9
+m = 3
 
+thetas = c(1:N)
+
+
+## Upper bound of theta 
+
+thetas[N] = m*sigma/((1-rho^2)^(1/2))
+
+## Lower bounf of theta 
+thetas[1] = -thetas[N]
+
+delta_theta = thetas[N]/((N-1)/2)
+
+# The other theta_ns
+# This calculates the value of the intermediary thetas
+
+for (i in 2:(N-1)){
+  print(i)
+  thetas[i] = thetas[1] + (i-1)*delta_theta
+}
+transition_matrix = matrix(,N,N)
+#transition_matrix
+
+
+#Probability(i,j) is given theta_i the probability of theta_j being draw in the next period
+
+for (i in 1:N){
+  for (j in 1:N){
+    if (j==1){
+      transition_matrix[i,j] = pnorm((thetas[j] + delta_theta/2 - rho*thetas[i])/sigma)
+    }else if (j==N){
+      transition_matrix[i,j] = 1 - pnorm((thetas[j] - delta_theta/2 - rho*thetas[i])/sigma)
+    }else{
+    transition_matrix[i,j] = pnorm((thetas[j] + delta_theta/2 - rho*thetas[i])/sigma) - pnorm((thetas[j] - delta_theta/2 - rho*thetas[i])/sigma)
+    }
+  }
 
 
 ```
