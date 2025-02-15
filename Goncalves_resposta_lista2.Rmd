@@ -70,7 +70,7 @@ for (i in 1:N){
     transition_matrix[i,j] = pnorm((thetas[j] + delta_theta/2 - rho*thetas[i])/sigma) - pnorm((thetas[j] - delta_theta/2 - rho*thetas[i])/sigma)
     }
   }
-
+}
 
 ```
 
@@ -78,14 +78,28 @@ for (i in 1:N){
 # Question 3
 # Iteration of the value function
 
-#Create grid for capital 
+ 
+k_grid = seq(from= 0.75*k_ss, to=1.25*k_ss, length.out = 500) #Create grid for capital
 
-# what is the k_ss?
+z_grid = thetas # The grid of the shocks 
 
-V0 = 0 # initia guess
+i =0
 
-k_grid = seq(from= 0.75*k_ss, to=1.25*k_ss, length.out = 500)
+Vt = 0 # V_0 starts with 0
+error_V_Vnew = 10 # initial error for the difference between V_t and V_t+1
 
+# Brute force 
+
+
+while (error_V_Vnew > toler){
+for (k in k_grid){
+  print(k)
+  for(z in z_grid){
+    print(z)
+  }
+}
+  error_V_Vnew =0
+}
 
 
 
