@@ -25,14 +25,14 @@ rho = 0.95 # persistence of the previous shock
 
 sigma = 0.007 # variance of the white error of the shock
 
-toler = 10^(-5)
+tol = 10^(-5)
 
 k_ss = (1/(alpha*beta) - (1-delta)/alpha)^(1/(alpha-1))
 ```
 
 ```{r}
 #Tauchen function
-N = 9
+N = 7 # number of points 
 m = 3
 
 thetas = c(1:N)
@@ -78,27 +78,88 @@ for (i in 1:N){
 # Question 3
 # Iteration of the value function
 
- 
-k_grid = seq(from= 0.75*k_ss, to=1.25*k_ss, length.out = 500) #Create grid for capital
+k_grid_size = 500
+k_grid = seq(from= 0.75*k_ss, to=1.25*k_ss, length.out = k_grid_size) #Create grid for capital
 
 z_grid = thetas # The grid of the shocks 
 
-i =0
+iter =0
 
-Vt = 0 # V_0 starts with 0
+
+
+max_iter = 10
+
+V =matrix(0,k_grid_size,N)  # V_0 starts with 0, it is a matrix
+#colnames(V) = c(thetas) # The V(k,z) is a vector that given a k it can assume different values depending on the realization of the shock z
+
+#### Create a list of names theta_1 to theta_n
+
+col_names_V = c(1:N)
+for(i in 1:N){
+  x= c("theta_",i)
+  col_name = paste(x, collapse = "")
+  col_names_V[i] = col_name   
+}
+
+colnames(V) = col_names_V
+
+
+####
+
+V_new = V
+
 error_V_Vnew = 10 # initial error for the difference between V_t and V_t+1
+
+k_prime_grid = k_grid
+
+
+### Defining the utility function
+u = function(c){
+  if(c<0){
+    return(-999999999999999999999999999999)
+  }
+  else{
+    return((c^(1-mu) -1)/(1-mu))
+  }
+}
+
+
+
+
+###
 
 # Brute force 
 
 
-while (error_V_Vnew > toler){
-for (k in k_grid){
-  print(k)
-  for(z in z_grid){
-    print(z)
+while (max_iter > iter){
+  z_idx = 1
+  for (z in z_grid){
+    print(paste("Whe are in z = ", z))
+    k_idx = 1
+    for(k in k_grid){
+      print(paste("k = ", k))
+      value_try = -9999999999999999999999999999
+      value_try_max = value_try
+      
+      for (k_prime in k_prime_grid){ #Here i find the k' who maximizes the value function V given k and z
+        
+        c = z*(k^alpha) + (1-delta)*k - k_prime
+        value_try = u(c) + beta*sum(transition_matrix[z_idx,]*V[k_idx,])
+        if (value_try> value_try_max){
+          value_try_max = value_try
+        }
+      }
+      V_new[k_idx,z_idx] = value_try_max
+      k_idx = k_idx +1
+    }
+    z_idx = z_idx +1
   }
-}
-  error_V_Vnew =0
+    error_V_Vnew =max(abs(V-V_new))
+    if(error_V_Vnew<tol){
+      break
+    }
+    V = V_new
+    iter = iter +1
 }
 
 
