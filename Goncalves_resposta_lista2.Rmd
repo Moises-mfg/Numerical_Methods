@@ -87,7 +87,7 @@ iter =0
 
 
 
-max_iter = 10
+max_iter = 20000
 
 V =matrix(0,k_grid_size,N)  # V_0 starts with 0, it is a matrix
 #colnames(V) = c(thetas) # The V(k,z) is a vector that given a k it can assume different values depending on the realization of the shock z
@@ -134,10 +134,10 @@ u = function(c){
 while (max_iter > iter){
   z_idx = 1
   for (z in z_grid){
-    print(paste("Whe are in z = ", z))
+    #print(paste("Whe are in z = ", z))
     k_idx = 1
     for(k in k_grid){
-      print(paste("k = ", k))
+      #print(paste("k = ", k))
       value_try = -9999999999999999999999999999
       value_try_max = value_try
       
@@ -159,6 +159,8 @@ while (max_iter > iter){
       break
     }
     V = V_new
+    print(paste("iteration = ", iter))
+    print(paste("error_V_Vnew = ", error_V_Vnew))
     iter = iter +1
 }
 
