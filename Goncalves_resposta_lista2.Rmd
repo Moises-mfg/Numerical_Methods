@@ -174,3 +174,5 @@ while (max_iter > iter){
 
 ```
 
+## Question 4
+# In this question we repeat the solution of exercise 4 bout now with the accelarator 
